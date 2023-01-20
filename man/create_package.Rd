@@ -4,15 +4,26 @@
 \alias{create_package}
 \title{Create a Jon Package}
 \usage{
-create_package(name, ...)
+create_package(
+  pkg_name,
+  title = "What the Package Does",
+  description = "The goal of {pkg_name} is to...",
+  r4ds = TRUE
+)
 }
 \arguments{
-\item{name}{The name of the package}
+\item{pkg_name}{The name of the package}
 
-\item{...}{Additional parameters passed on to \code{\link[usethis:create_package]{usethis::create_package()}}.}
+\item{title}{What the package does in title case.}
+
+\item{description}{A one-paragraph description of the package. Will be used
+to initially populate both the DESCRIPION and the README.}
+
+\item{r4ds}{Whether to create the package under the r4ds organization
+(default \code{TRUE}).}
 }
 \value{
-Path to the newly created project or package, invisibly.
+\code{NULL}, invisibly.
 }
 \description{
 Create a Jon Package

@@ -1,26 +1,53 @@
 #' Create a Jon Package
 #'
-#' @param name The name of the package
-#' @param ... Additional parameters passed on to [usethis::create_package()].
-#'
-#' @inherit usethis::create_package return
-#' @export
-create_package <- function(name, ...) {
-  path <- fs::path(getOption("usethis.destdir"), name)
-  ui_todo("Run `finish_package_setup()` in the new project.")
-  usethis::create_package(path, ...)
-}
-
-#' Run the Rest of the Things
-#'
-#' This must execute in a package directory. It assumes a lot.
-#'
+#' @param pkg_name The name of the package
+#' @param title What the package does in title case.
+#' @param description A one-paragraph description of the package. Will be used
+#'   to initially populate both the DESCRIPION and the README.
 #' @param r4ds Whether to create the package under the r4ds organization
 #'   (default `TRUE`).
 #'
-#' @return The path to the package, probably.
+#' @return `NULL`, invisibly.
 #' @export
-finish_package_setup <- function(r4ds = TRUE) {
+create_package <- function(pkg_name,
+                           title = "What the Package Does",
+                           description = "The goal of {pkg_name} is to...",
+                           r4ds = TRUE) {
+  path <- fs::path(getOption("usethis.destdir"), pkg_name)
+  description <- glue::glue(description)
+  title <- glue::glue(title)
+  usethis::create_package(
+    path,
+    fields = list(
+      title = title,
+      description = description
+    ),
+    open = FALSE
+  )
+  local_project(path)
+
+  organization <- NULL
+  if (r4ds) {
+    organization <- "r4ds"
+  }
+  gh_root <- organization %||% "jonthegeek"
+
+  gh_short_url <- paste(gh_root, pkg_name, sep = "/")
+  pkg_data <- list(
+    Package = pkg_name,
+    github_spec = gh_short_url,
+    description = description,
+    gh_root = gh_root,
+    Rmd = TRUE
+  )
+
+  use_template(
+    template = "package-README",
+    save_as = "README.Rmd",
+    data = pkg_data,
+    package = "andthis"
+  )
+
   use_testthat()
   use_mit_license()
   use_tidy_description()
@@ -30,15 +57,8 @@ finish_package_setup <- function(r4ds = TRUE) {
   use_git()
   ui_line("\n\nuse_github() --------------------------------------------------")
   ui_info("Say yes.")
-
-  organization <- NULL
-  if (r4ds) {
-    organization <- "r4ds"
-  }
   use_github(organisation = organization)
 
-  # Ok, NOW we can create the README.
-  use_readme_rmd(open = FALSE)
   use_lifecycle_badge("experimental")
   use_cran_badge()
   use_cran_comments(open = FALSE)
@@ -47,14 +67,6 @@ finish_package_setup <- function(r4ds = TRUE) {
 
   use_directory(".github", ignore = TRUE)
   use_git_ignore("*.html", directory = ".github")
-
-  # Get info about the project so far. We'll probably redo this occasionally.
-  base_path <- proj_get()
-  desc <- desc::description$new(base_path)
-  desc <- as.list(desc$get(desc$fields()))
-  pkg_name <- desc$Package
-  gh_short_url <- paste(c(organization, pkg_name), collapse = "/")
-  pkg_data <- list(Package = pkg_name, github_spec = gh_short_url)
 
   use_template(
     template = "contributing.md",
@@ -98,10 +110,8 @@ finish_package_setup <- function(r4ds = TRUE) {
   devtools::document()
   devtools::build_readme()
 
-  ui_todo("Run `protect_main()` when you've checked this all in.")
-  ui_todo("The code of conduct isn't added to the README automatically.")
-  ui_todo("Fix that manually, or delete the COC file and rerun.")
-  ui_todo("A restart of RStudio is required to activate the Git pane")
+  ui_todo("\n\nRun `protect_main()` when you've checked this all in.")
+  ui_todo("\n\nA restart of RStudio is required to activate the Git pane")
   if (ui_yeah("Restart now?")) {
     rstudioapi::openProject(proj_get())
   }

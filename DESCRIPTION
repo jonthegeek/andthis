@@ -13,7 +13,9 @@ BugReports: https://github.com/jonthegeek/andthis/issues
 Depends:
     usethis
 Imports: 
-    desc
+    desc,
+    glue,
+    rlang
 Suggests: 
     covr,
     testthat (>= 3.0.0)
