@@ -39,4 +39,10 @@
   <url>
     <loc>https://jonthegeek.github.io/andthis/reference/protect_main.html</loc>
   </url>
+  <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/protect_readme.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/use_precommit_hook.html</loc>
+  </url>
 </urlset>
