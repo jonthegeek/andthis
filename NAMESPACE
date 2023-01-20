@@ -3,4 +3,6 @@
 export(create_club)
 export(create_package)
 export(protect_main)
+export(protect_readme)
+export(use_precommit_hook)
 importFrom(rlang,"%||%")

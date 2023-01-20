@@ -19,8 +19,8 @@ create_package <- function(pkg_name,
   usethis::create_package(
     path,
     fields = list(
-      title = title,
-      description = description
+      Title = title,
+      Description = description
     ),
     open = FALSE
   )
@@ -55,6 +55,8 @@ create_package <- function(pkg_name,
   ui_line("\n\nuse_git() -----------------------------------------------------")
   ui_info("It's ok to commit, but don't restart!")
   use_git()
+  protect_readme()
+
   ui_line("\n\nuse_github() --------------------------------------------------")
   ui_info("Say yes.")
   use_github(organisation = organization)
@@ -120,10 +122,54 @@ create_package <- function(pkg_name,
 
   ui_line("\n\n")
   ui_warn("GitHub actions will fail until you have actual tests.")
-  ui_todo("A restart of RStudio is required to activate the Git pane")
-  if (ui_yeah("Restart now?")) {
-    rstudioapi::openProject(proj_get())
+
+  rstudioapi::openProject(proj_get(), newSession = TRUE)
+}
+
+#' Make sure README.md is rendered
+#'
+#' @return `NULL` (invisibly).
+#' @export
+protect_readme <- function() {
+  hook <- c(
+    "README=($(git diff --cached --name-only | grep -Ei '^README\\.[R]?md$'))",
+    "MSG=\"use 'git commit --no-verify' to override this check\"",
+    "", "if [[ ${#README[@]} == 0 ]]; then", "  exit 0", "fi", "",
+    "if [[ README.Rmd -nt README.md ]]; then",
+    "  echo -e \"README.md is out of date; please re-knit README.Rmd\\n$MSG\"",
+    "  exit 1", "elif [[ ${#README[@]} -lt 2 ]]; then",
+    "  echo -e \"README.Rmd and README.md should be both staged\\n$MSG\"",
+    "  exit 1", "fi"
+  )
+  use_precommit_hook(hook)
+}
+
+#' Add something to the precommit hook
+#'
+#' @return `NULL` (invisibly).
+#' @export
+use_precommit_hook <- function(hook) {
+  if (fs::file_exists(".git/hooks/pre-commit")) {
+    existing_pre_commit <- readLines(".git/hooks/pre-commit")
+    existing_pre_commit <- setdiff(
+      existing_pre_commit,
+      "#!/bin/bash"
+    )
+    existing_pre_commit <- setdiff(
+      existing_pre_commit,
+      "#!/bin/sh"
+    )
+
+    if (all(hook %in% existing_pre_commit)) {
+      return(invisible(TRUE))
+    } else {
+      hook <- c(existing_pre_commit, hook)
+    }
   }
+
+  hook <- c("#!/bin/bash", hook)
+
+  use_git_hook("pre-commit", hook)
 }
 
 #' Stop yourself from checking into the main branch
@@ -131,37 +177,14 @@ create_package <- function(pkg_name,
 #' @return `NULL` (invisibly).
 #' @export
 protect_main <- function() {
-  to_write <- paste(
+  hook <- c(
     'branch="$(git rev-parse --abbrev-ref HEAD)"',
     'if [ "$branch" = "main" -o "$branch" = "master" ]; then',
     '  echo "Do not commit directly to the main branch"',
     '  exit 1',
-    'fi',
-    sep = "\n"
+    'fi'
   )
-
-  if (fs::file_exists(".git/hooks/pre-commit")) {
-    existing_pre_commit <- readLines(".git/hooks/pre-commit")
-    already_protected <- any(
-      stringr::str_detect(
-        existing_pre_commit,
-        "Do not commit directly to the main branch"
-      )
-    )
-    if (already_protected) {
-      return(invisible(NULL))
-    } else {
-      to_write <- paste(c(existing_pre_commit, to_write), collapse = "\n")
-    }
-  }
-
-  to_write <- paste(
-    "#!/bin/sh",
-    to_write,
-    sep = "\n"
-  )
-
-  use_git_hook("pre-commit", to_write)
+  use_precommit_hook(hook)
 }
 
 #' Create an R4DS book club
