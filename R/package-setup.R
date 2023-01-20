@@ -118,7 +118,9 @@ create_package <- function(pkg_name,
   ### Don't let anything else be done at main.
   protect_main()
 
-  ui_todo("\n\nA restart of RStudio is required to activate the Git pane")
+  ui_line("\n\n")
+  ui_warn("GitHub actions will fail until you have actual tests.")
+  ui_todo("A restart of RStudio is required to activate the Git pane")
   if (ui_yeah("Restart now?")) {
     rstudioapi::openProject(proj_get())
   }
@@ -129,8 +131,7 @@ create_package <- function(pkg_name,
 #' @return `NULL` (invisibly).
 #' @export
 protect_main <- function() {
-  no_main <- paste(
-    "#!/bin/sh",
+  to_write <- paste(
     'branch="$(git rev-parse --abbrev-ref HEAD)"',
     'if [ "$branch" = "main" -o "$branch" = "master" ]; then',
     '  echo "Do not commit directly to the main branch"',
@@ -138,7 +139,29 @@ protect_main <- function() {
     'fi',
     sep = "\n"
   )
-  use_git_hook("pre-commit", no_main)
+
+  if (fs::file_exists(".git/hooks/pre-commit")) {
+    existing_pre_commit <- readLines(".git/hooks/pre-commit")
+    already_protected <- any(
+      stringr::str_detect(
+        existing_pre_commit,
+        "Do not commit directly to the main branch"
+      )
+    )
+    if (already_protected) {
+      return(invisible(NULL))
+    } else {
+      to_write <- paste(c(existing_pre_commit, to_write), collapse = "\n")
+    }
+  }
+
+  to_write <- paste(
+    "#!/bin/sh",
+    to_write,
+    sep = "\n"
+  )
+
+  use_git_hook("pre-commit", to_write)
 }
 
 #' Create an R4DS book club
