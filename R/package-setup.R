@@ -110,7 +110,14 @@ create_package <- function(pkg_name,
   devtools::document()
   devtools::build_readme()
 
-  ui_todo("\n\nRun `protect_main()` when you've checked this all in.")
+  ### Send it all to github.
+  gert::git_add(gert::git_status(FALSE)$file)
+  gert::git_commit_all("Finish setup.")
+  gert::git_push()
+
+  ### Don't let anything else be done at main.
+  protect_main()
+
   ui_todo("\n\nA restart of RStudio is required to activate the Git pane")
   if (ui_yeah("Restart now?")) {
     rstudioapi::openProject(proj_get())
