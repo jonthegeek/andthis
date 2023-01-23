@@ -1,10 +1,8 @@
 #' @keywords internal
 "_PACKAGE"
 
-## rlang namespace: start
-#' @importFrom rlang %||%
-## rlang namespace: end
 ## usethis namespace: start
+#' @importFrom rlang %||%
 #' @importFrom usethis create_from_github
 #' @importFrom usethis local_project
 #' @importFrom usethis proj_get
