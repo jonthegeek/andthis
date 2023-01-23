@@ -14,8 +14,8 @@ create_package <- function(pkg_name,
                            description = "The goal of {pkg_name} is to...",
                            r4ds = TRUE) {
   path <- fs::path(getOption("usethis.destdir"), pkg_name)
-  description <- glue::glue(description)
   title <- glue::glue(title)
+  description <- glue::glue(description)
   usethis::create_package(
     path,
     fields = list(
@@ -24,15 +24,22 @@ create_package <- function(pkg_name,
     ),
     open = FALSE
   )
+
+  # Set the new project as the active project until this function completes.
   local_project(path)
 
   organization <- NULL
   if (r4ds) {
     organization <- "r4ds"
   }
+
+  # Figure out where the project will be stored. Hard-coded and messy for
+  # personal use.
   gh_root <- organization %||% "jonthegeek"
 
   gh_short_url <- paste(gh_root, pkg_name, sep = "/")
+
+  # Set up a data object to use with various templates.
   pkg_data <- list(
     Package = pkg_name,
     github_spec = gh_short_url,
@@ -145,6 +152,14 @@ protect_readme <- function() {
 }
 
 #' Add something to the precommit hook
+#'
+#' Unlike [usethis::use_git_hook()], this function checks to see if you already
+#' have a pre-commit hook, and attempts to add to it while avoiding duplication.
+#' The checks are imperfect, which is probably why this isn't in usethis this
+#' way.
+#'
+#' @param hook Character. The hook to add, with one line of output per element
+#'   of the vector.
 #'
 #' @return `NULL` (invisibly).
 #' @export
