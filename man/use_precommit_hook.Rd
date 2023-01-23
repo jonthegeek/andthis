@@ -6,9 +6,16 @@
 \usage{
 use_precommit_hook(hook)
 }
+\arguments{
+\item{hook}{Character. The hook to add, with one line of output per element
+of the vector.}
+}
 \value{
 \code{NULL} (invisibly).
 }
 \description{
-Add something to the precommit hook
+Unlike \code{\link[usethis:use_git_hook]{usethis::use_git_hook()}}, this function checks to see if you already
+have a pre-commit hook, and attempts to add to it while avoiding duplication.
+The checks are imperfect, which is probably why this isn't in usethis this
+way.
 }
