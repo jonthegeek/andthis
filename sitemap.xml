@@ -34,6 +34,21 @@
     <loc>https://jonthegeek.github.io/andthis/reference/create_package.html</loc>
   </url>
   <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/dot-extract_precommit_blocks.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/dot-finalize_hooks.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/dot-parse_existing_pre_commit.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/dot-prepare_existing_hooks.html</loc>
+  </url>
+  <url>
+    <loc>https://jonthegeek.github.io/andthis/reference/dot-prepare_hook.html</loc>
+  </url>
+  <url>
     <loc>https://jonthegeek.github.io/andthis/reference/index.html</loc>
   </url>
   <url>
