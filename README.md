@@ -14,7 +14,11 @@ coverage](https://codecov.io/gh/jonthegeek/andthis/branch/main/graph/badge.svg)]
 [![R-CMD-check](https://github.com/jonthegeek/andthis/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jonthegeek/andthis/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of andthis is to …
+This is my personal usethis-customization package. While some of the
+functions might serve as inspiration for others, you should not try to
+use it directly for your own purposes. For example, it’s hard-coded to
+either create packages in the r4ds organization, or in my personal
+github.
 
 ## Installation
 
