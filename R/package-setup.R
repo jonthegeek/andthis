@@ -111,7 +111,7 @@ create_package <- function(pkg_name,
   use_github_action("test-coverage")
 
   ### Run the last couple calls.
-  use_tidy_github_labels()
+  use_tidy_github_labels() # Update these to my own list.
   use_pkgdown_github_pages()
 
   ### Clean up files that have been touched.
@@ -140,15 +140,21 @@ create_package <- function(pkg_name,
 protect_readme <- function() {
   hook <- c(
     "README=($(git diff --cached --name-only | grep -Ei '^README\\.[R]?md$'))",
-    "MSG=\"use 'git commit --no-verify' to override this check\"",
-    "", "if [[ ${#README[@]} == 0 ]]; then", "  exit 0", "fi", "",
-    "if [[ README.Rmd -nt README.md ]]; then",
-    "  echo -e \"README.md is out of date; please re-knit README.Rmd\\n$MSG\"",
-    "  exit 1", "elif [[ ${#README[@]} -lt 2 ]]; then",
-    "  echo -e \"README.Rmd and README.md should be both staged\\n$MSG\"",
-    "  exit 1", "fi"
+    "if [[ ${#README[@]} != 0 ]]; then",
+    "  if [[ README.Rmd -nt README.md ]]; then",
+    '    echo -e "README.md is out of date; please re-knit README.Rmd\\n$NOVERIFYMSG"',
+    "    exit 1",
+    "  elif [[ ${#README[@]} -lt 2 ]]; then",
+    '    echo -e "README.Rmd and README.md should both be staged.\\n$NOVERIFYMSG"',
+    "    # No exit; sometimes you need to do this to fix things.",
+    "  fi",
+    "fi"
   )
-  use_precommit_hook(hook)
+
+  use_precommit_hook(
+    hook = hook,
+    priority = -1000 # Needs to be last.
+  )
 }
 
 #' Add something to the precommit hook
@@ -156,35 +162,209 @@ protect_readme <- function() {
 #' Unlike [usethis::use_git_hook()], this function checks to see if you already
 #' have a pre-commit hook, and attempts to add to it while avoiding duplication.
 #' The checks are imperfect, which is probably why this isn't in usethis this
-#' way.
+#' way. It will also fail if something exits early on success before everything
+#' has ran.
 #'
 #' @param hook Character. The hook to add, with one line of output per element
 #'   of the vector.
+#' @param priority Where to put the hook. By default the hook is added at the
+#'   end. Higher-priority hooks will be added higher up.
 #'
 #' @return `NULL` (invisibly).
 #' @export
-use_precommit_hook <- function(hook) {
-  if (fs::file_exists(".git/hooks/pre-commit")) {
-    existing_pre_commit <- readLines(".git/hooks/pre-commit")
-    existing_pre_commit <- setdiff(
-      existing_pre_commit,
-      "#!/bin/bash"
+use_precommit_hook <- function(hook, priority = 0) {
+  if (any(stringr::str_starts(hook, "NOVERIFYMSG="))) {
+    cli::cli_abort(
+      "Hooks cannot define a variable named NOVERIFYMSG."
     )
-    existing_pre_commit <- setdiff(
-      existing_pre_commit,
-      "#!/bin/sh"
-    )
+  }
+  prepared_hooks <- list(.prepare_hook(hook, priority))
 
-    if (all(hook %in% existing_pre_commit)) {
+  if (fs::file_exists(".git/hooks/pre-commit")) {
+    existing_hooks <- .parse_existing_pre_commit()
+
+    if (prepared_hooks %in% existing_hooks) {
       return(invisible(TRUE))
-    } else {
-      hook <- c(existing_pre_commit, hook)
     }
+
+    prepared_hooks <- c(existing_hooks, prepared_hooks)
   }
 
-  hook <- c("#!/bin/bash", hook)
+
+
+  hook <- c(
+    "#!/bin/bash",
+    "NOVERIFYMSG='use `git commit --no-verify` to override this check'",
+    .finalize_hooks(prepared_hooks)
+  )
 
   use_git_hook("pre-commit", hook)
+}
+
+#' Clean up a hook and prep it for use
+#'
+#' @param hook The hook as a character vector, with one line per element of the
+#'   vector.
+#' @param priority The integer priority of the hook. Lower-priority hooks will
+#'   be placed later in the script.
+#'
+#' @return A character vector with class "hook," with the priority as an
+#'   attribute.
+#' @keywords internal
+.prepare_hook <- function(hook, priority = 0) {
+  # Get rid of starting boilerplate.
+  hook <- setdiff(
+    hook,
+    "#!/bin/bash"
+  )
+  hook <- setdiff(
+    hook,
+    "#!/bin/sh"
+  )
+  if (hook[[1]] == "") {
+    hook <- hook[-1]
+  }
+
+  return(
+    structure(
+      c(
+        # Include a blank line to make things lay out nicely.
+        "",
+        "# HOOKSTART",
+        glue::glue("# HOOKPRIORITY {priority}"),
+        hook,
+        "# HOOKEND"
+      ),
+      class = "hook",
+      priority = priority
+    )
+  )
+}
+
+#' Load existing pre-commit hooks and prep for recombining
+#'
+#' @return A list of hooks.
+#' @keywords internal
+.parse_existing_pre_commit <- function() {
+  existing_pre_commit <- readLines(
+    proj_path(".git/hooks/pre-commit")
+  )
+
+  # Remove things that we'll add back later.
+  existing_pre_commit <- existing_pre_commit[
+    stringr::str_starts(existing_pre_commit, "NOVERIFYMSG=", TRUE)
+  ]
+
+  # Don't use setdiff for these! It gets rid of duplicates!
+  existing_pre_commit <- existing_pre_commit[
+    !(existing_pre_commit %in% c("#!/bin/bash", "#!/bin/sh"))
+  ]
+
+  if (length(existing_pre_commit) && existing_pre_commit[[1]] == "") {
+    existing_pre_commit <- existing_pre_commit[-1]
+  }
+
+  if (length(existing_pre_commit)) {
+    # Parse labeled blocks. At least for now, I assume they're well-formed.
+    return(.prepare_existing_hooks(existing_pre_commit))
+  } else {
+    return(list())
+  }
+}
+
+#' Prep existing hooks for recombining
+#'
+#' @param existing_pre_commit A character vector with one element per row of the
+#'   existing pre-commit hook, minus the boilerplate at the start.
+#'
+#' @return A list of hooks.
+#' @keywords internal
+.prepare_existing_hooks <- function(existing_pre_commit) {
+  parsed_parts <- .extract_precommit_blocks(existing_pre_commit)
+
+  prepared_hooks <- parsed_parts$prepared_hooks
+
+  # Remove rows that were extracted and see if anything is left over.
+  uncovered <- setdiff(
+    seq_along(existing_pre_commit),
+    unlist(parsed_parts$covered_rows)
+  )
+  uncovered <- existing_pre_commit[uncovered]
+
+  if (length(uncovered) && uncovered[[1]] == "") {
+    uncovered <- uncovered[-1]
+  }
+
+  if (length(uncovered)) {
+    # Treat this as a single hook with default priority.
+    uncovered_hook <- list(.prepare_hook(uncovered))
+    prepared_hooks <- c(prepared_hooks, uncovered_hook)
+  }
+
+  return(prepared_hooks)
+}
+
+#' Parse formatted hooks into a list of hooks
+#'
+#' @inheritParams .prepare_existing_hooks
+#'
+#' @return A list of hooks.
+#' @keywords internal
+.extract_precommit_blocks <- function(existing_pre_commit) {
+  return(
+    tibble::tibble(
+      starts = which(
+        stringr::str_starts(existing_pre_commit, "# HOOKSTART")
+      ),
+      ends = which(
+        stringr::str_starts(existing_pre_commit, "# HOOKEND")
+      )
+    ) |>
+      dplyr::mutate(
+        hook = purrr::map2(
+          .data$starts, .data$ends,
+          \(start, end) {
+            this_hook <- existing_pre_commit[start:(end - 1)]
+            this_hook <- this_hook[-1]
+            this_hook <- this_hook[-1]
+            return(this_hook)
+          }
+        ),
+        priority = stringr::str_subset(
+          .env$existing_pre_commit, "^# HOOKPRIORITY"
+        ) |>
+          stringr::str_remove("^# HOOKPRIORITY") |>
+          stringr::str_squish() |>
+          as.integer(),
+        prepared_hooks = purrr::map2(
+          .data$hook, .data$priority,
+          .prepare_hook
+        ),
+        covered_rows = purrr::map2(
+          .data$starts, .data$ends,
+          `:`
+        )
+      )
+  )
+}
+
+#' Sort hooks and combine
+#'
+#' @param prepared_hooks A list of hooks.
+#'
+#' @return A character vector with the hook contents, in priority order.
+#' @keywords internal
+.finalize_hooks <- function(prepared_hooks) {
+  priorities <- purrr::map_int(
+    prepared_hooks,
+    attr,
+    "priority",
+    exact = TRUE
+  )
+
+  return(
+    unlist(prepared_hooks[sort.list(priorities, decreasing = TRUE)])
+  )
 }
 
 #' Stop yourself from checking into the main branch
@@ -195,23 +375,12 @@ protect_main <- function() {
   hook <- c(
     'branch="$(git rev-parse --abbrev-ref HEAD)"',
     'if [ "$branch" = "main" -o "$branch" = "master" ]; then',
-    '  echo "Do not commit directly to the main branch"',
-    '  exit 1',
-    'fi'
+    '  echo -e "Do not commit directly to the main branch\\n$NOVERIFYMSG"',
+    "  exit 1",
+    "fi"
   )
-  use_precommit_hook(hook)
-}
-
-#' Create an R4DS book club
-#'
-#' @param book_abbr The short name for the book. Should match the channel.
-#'
-#' @return The path to the new project, invisibly.
-#' @export
-create_club <- function(book_abbr) {
-  repo <- paste0(
-    "r4ds/bookclub-",
-    book_abbr
+  use_precommit_hook(
+    hook = hook,
+    priority = 1000
   )
-  create_from_github(repo)
 }

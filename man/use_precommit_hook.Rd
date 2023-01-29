@@ -4,11 +4,14 @@
 \alias{use_precommit_hook}
 \title{Add something to the precommit hook}
 \usage{
-use_precommit_hook(hook)
+use_precommit_hook(hook, priority = 0)
 }
 \arguments{
 \item{hook}{Character. The hook to add, with one line of output per element
 of the vector.}
+
+\item{priority}{Where to put the hook. By default the hook is added at the
+end. Higher-priority hooks will be added higher up.}
 }
 \value{
 \code{NULL} (invisibly).
@@ -17,5 +20,6 @@ of the vector.}
 Unlike \code{\link[usethis:use_git_hook]{usethis::use_git_hook()}}, this function checks to see if you already
 have a pre-commit hook, and attempts to add to it while avoiding duplication.
 The checks are imperfect, which is probably why this isn't in usethis this
-way.
+way. It will also fail if something exits early on success before everything
+has ran.
 }

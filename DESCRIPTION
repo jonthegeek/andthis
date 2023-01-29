@@ -1,6 +1,6 @@
 Package: andthis
 Title: Jon's Convenience Functions
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("Jon", "Harmon", , "jonthegeek@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4781-4346"))
@@ -11,12 +11,17 @@ URL: https://github.com/jonthegeek/andthis,
     https://jonthegeek.github.io/andthis/
 BugReports: https://github.com/jonthegeek/andthis/issues
 Imports: 
+    cli,
     devtools,
+    dplyr,
     fs,
     gert,
     glue,
+    purrr,
     rlang,
     rstudioapi,
+    stringr,
+    tibble,
     usethis
 Suggests: 
     covr,
