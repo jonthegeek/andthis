@@ -270,7 +270,6 @@ use_precommit_hook <- function(hook, priority = 0) {
   } else {
     return(list())
   }
-
 }
 
 #' Prep existing hooks for recombining
@@ -377,8 +376,8 @@ protect_main <- function() {
     'branch="$(git rev-parse --abbrev-ref HEAD)"',
     'if [ "$branch" = "main" -o "$branch" = "master" ]; then',
     '  echo -e "Do not commit directly to the main branch\\n$NOVERIFYMSG"',
-    '  exit 1',
-    'fi'
+    "  exit 1",
+    "fi"
   )
   use_precommit_hook(
     hook = hook,
