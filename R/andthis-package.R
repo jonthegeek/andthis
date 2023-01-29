@@ -3,9 +3,12 @@
 
 ## usethis namespace: start
 #' @importFrom rlang %||%
+#' @importFrom rlang .data
+#' @importFrom rlang .env
 #' @importFrom usethis create_from_github
 #' @importFrom usethis local_project
 #' @importFrom usethis proj_get
+#' @importFrom usethis proj_path
 #' @importFrom usethis ui_info
 #' @importFrom usethis ui_line
 #' @importFrom usethis ui_warn
