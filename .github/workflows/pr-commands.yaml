@@ -4,9 +4,6 @@ on:
   issue_comment:
     types: [created]
 
-permissions:
-  contents: write
-
 name: Commands
 
 jobs:
