@@ -22,7 +22,8 @@ Imports:
     rstudioapi,
     stringr,
     tibble,
-    usethis
+    usethis,
+    withr
 Suggests: 
     covr,
     testthat (>= 3.0.0)
