@@ -31,6 +31,7 @@ create_package <- function(pkg_name,
   withr::defer(
     options(old_overwrite)
   )
+
   # Set the new project as the active project until this function completes.
   local_project(path)
 
@@ -73,6 +74,11 @@ create_package <- function(pkg_name,
   ui_line("\n\nuse_github() --------------------------------------------------")
   ui_info("Say yes.")
   use_github(organisation = organization)
+
+  # There's nothing else that's necessary to interact with, so make it think we
+  # aren't interactive.
+  old_interactive <- options(rlang_interactive = FALSE)
+  withr::defer(options(old_interactive))
 
   use_lifecycle_badge("experimental")
   use_cran_badge()

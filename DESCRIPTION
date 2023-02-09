@@ -17,12 +17,14 @@ Imports:
     fs,
     gert,
     glue,
+    googlesheets4,
     purrr,
     rlang,
     rstudioapi,
     stringr,
     tibble,
     usethis,
+    whisker,
     withr
 Suggests: 
     covr,
@@ -32,3 +34,5 @@ Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
