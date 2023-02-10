@@ -25,6 +25,13 @@ create_package <- function(pkg_name,
     open = FALSE
   )
 
+  # From here on out I'm writing within a directory I just created, so
+  # overwriting is ok.
+  old_overwrite <- options(usethis.overwrite = TRUE)
+  withr::defer(
+    options(old_overwrite)
+  )
+
   # Set the new project as the active project until this function completes.
   local_project(path)
 
@@ -60,13 +67,18 @@ create_package <- function(pkg_name,
   use_tidy_description()
   use_package_doc(open = FALSE)
   ui_line("\n\nuse_git() -----------------------------------------------------")
-  ui_info("It's ok to commit, but don't restart!")
+  ui_info("It's ok to commit.")
   use_git()
   protect_readme()
 
   ui_line("\n\nuse_github() --------------------------------------------------")
   ui_info("Say yes.")
   use_github(organisation = organization)
+
+  # There's nothing else that's necessary to interact with, so make it think we
+  # aren't interactive.
+  old_interactive <- options(rlang_interactive = FALSE)
+  withr::defer(options(old_interactive))
 
   use_lifecycle_badge("experimental")
   use_cran_badge()
