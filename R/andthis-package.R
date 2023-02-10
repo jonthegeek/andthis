@@ -6,7 +6,6 @@
 #' @importFrom rlang .data
 #' @importFrom rlang .env
 #' @importFrom usethis create_from_github
-#' @importFrom usethis create_project
 #' @importFrom usethis local_project
 #' @importFrom usethis proj_get
 #' @importFrom usethis proj_path
@@ -33,5 +32,6 @@
 #' @importFrom usethis use_testthat
 #' @importFrom usethis use_tidy_description
 #' @importFrom usethis use_tidy_github_labels
+#' @importFrom usethis write_over
 ## usethis namespace: end
 NULL

@@ -27,10 +27,7 @@ create_package <- function(pkg_name,
 
   # From here on out I'm writing within a directory I just created, so
   # overwriting is ok.
-  old_overwrite <- options(usethis.overwrite = TRUE)
-  withr::defer(
-    options(old_overwrite)
-  )
+  withr::local_options(list(usethis.overwrite = TRUE))
 
   # Set the new project as the active project until this function completes.
   local_project(path)
