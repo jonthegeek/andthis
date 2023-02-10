@@ -15,10 +15,7 @@ create_club <- function(book_abbr) {
 
   # From here on out I'm writing within a directory I just created, so
   # overwriting is ok.
-  old_overwrite <- options(usethis.overwrite = TRUE)
-  withr::defer(
-    options(old_overwrite)
-  )
+  withr::local_options(list(usethis.overwrite = TRUE))
 
   .apply_book_data(book_data)
 
@@ -37,6 +34,8 @@ create_club <- function(book_abbr) {
   ui_warn(
     "Be sure to set up {pages_url}!"
   )
+
+  return(invisible(proj_path()))
 }
 
 .get_book_data <- function(book_abbr) {
@@ -136,5 +135,5 @@ create_club <- function(book_abbr) {
     "\n"
   )[[1]]
 
-  usethis::write_over(path, updated_contents, quiet = TRUE)
+  write_over(path, updated_contents, quiet = TRUE)
 }
