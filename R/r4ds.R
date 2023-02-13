@@ -137,3 +137,66 @@ create_club <- function(book_abbr) {
 
   write_over(path, updated_contents, quiet = TRUE)
 }
+
+#' Copy File Template for Chapters
+#'
+#' Create a separate Rmd for each chapter, and apply the basic template
+#' information.
+#'
+#' @param chapters A character vector of chapter titles. For now the assumption
+#'   is that the vector contains numbered chapters starting with chapter 1.
+#'
+#' @return NULL (invisibly)
+#' @export
+create_club_chapter_rmds <- function(chapters) {
+  # Again, I only try to write over files I create, and I explicitly don't
+  # create files if they already exist.
+  withr::local_options(list(usethis.overwrite = TRUE))
+
+  if (fs::file_exists(here::here("99999.Rmd"))) {
+    purrr::walk2(
+      seq_along(chapters), chapters,
+      .create_club_chapter_rmd_single
+    )
+  } else {
+    cli::cli_abort(
+      c(
+        x = "Cannot find chapter source file 99999.Rmd.",
+        i = "Are you in the book's project?"
+      )
+    )
+  }
+}
+
+.create_club_chapter_rmd_single <- function(chapter_number, chapter_title) {
+  formatted_chapter_number <- stringr::str_pad(chapter_number, 2, "left", "0")
+  formatted_chapter_title <- tolower(.as_filename(chapter_title))
+  chapter_rmd_path <- here::here(
+    glue::glue("{formatted_chapter_number}_{formatted_chapter_title}.Rmd")
+  )
+
+  # Make the file. This will error if the file already exists.
+  fs::file_copy(
+    here::here("99999.Rmd"),
+    chapter_rmd_path
+  )
+
+  # Add the data to the template.
+  updated_contents <- strsplit(
+    whisker::whisker.render(
+      readLines(chapter_rmd_path, encoding = "UTF-8", warn = FALSE),
+      data = list(chapter_title = chapter_title)
+    ),
+    "\n"
+  )[[1]]
+
+  write_over(chapter_rmd_path, updated_contents, quiet = TRUE)
+}
+
+.as_filename <- function(string) {
+  # This is messy. Accented character and the like will be removed. But for now
+  # it's good enough.
+  string |>
+    stringr::str_replace_all(" ", "-") |>
+    stringr::str_remove_all("[^A-Za-z0-9-]")
+}
