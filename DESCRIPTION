@@ -21,6 +21,7 @@ Imports:
     glue,
     googlesheets4,
     here,
+    lubridate,
     purrr,
     rlang,
     rstudioapi,

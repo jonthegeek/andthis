@@ -43,7 +43,7 @@ create_club <- function(book_abbr) {
   book_data <- googlesheets4::read_sheet(
     .club_gs4_sheet_id,
     sheet = "Approved Books",
-    col_types = "cccccclcccccDcicccccccc"
+    col_types = "c"
   ) |>
     dplyr::filter(
       .data$book_abbr == .env$book_abbr,
@@ -51,10 +51,18 @@ create_club <- function(book_abbr) {
     ) |>
     # Get rid of columns that are for bookkeeping in the sheet.
     dplyr::select(
+      -"request_timestamp",
       -"Amazon Search",
       -"sign_up_url",
       -"club_notes_needed",
-      -"gh_pages_setting_done"
+      -"gh_pages_setting_done",
+      -"redirect_done",
+      -"club_notes_url"
+    ) |>
+    # Now that we have the columns we expect, we can apply formats.
+    dplyr::mutate(
+      print = as.logical(.data$print),
+      cohort01_start_date = lubridate::as_date(.data$cohort01_start_date)
     )
 
   if (!nrow(book_data) || is.na(book_data$club_notes_done)) {
