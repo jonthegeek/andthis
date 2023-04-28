@@ -58,6 +58,7 @@ create_package <- function(pkg_name,
     data = pkg_data,
     package = "andthis"
   )
+  usethis::use_build_ignore("README.Rmd")
 
   use_testthat()
   use_mit_license()
@@ -114,13 +115,13 @@ create_package <- function(pkg_name,
 
   ### This block semi-replicates usethis::use_tidy_github_actions() ------------
   use_coverage()
-  use_github_action_check_standard()
-  use_github_action_pr_commands()
+  use_github_action("check-standard")
+  use_github_action("pr-commands")
   use_github_action("pkgdown")
   use_github_action("test-coverage")
 
   ### Run the last couple calls.
-  use_tidy_github_labels() # Update these to my own list.
+  use_tidy_github_labels() # TODO: Update these to my own list.
   use_pkgdown_github_pages()
 
   ### Clean up files that have been touched.
