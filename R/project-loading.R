@@ -8,7 +8,7 @@
 #'
 #' @return Called for side effects. Probably something invisibly.
 #' @export
-proj <- function(project, new_session = TRUE) {
+open_proj <- function(project, new_session = TRUE) {
   path <- fs::path(
     getOption("usethis.destdir", default = fs::path_home_r()),
     project
@@ -22,10 +22,10 @@ proj <- function(project, new_session = TRUE) {
 #' Open the RStudio project for a book club
 #'
 #' @param club The abbreviation for the club.
-#' @inheritParams proj
+#' @inheritParams open_proj
 #'
-#' @inherit proj return
+#' @inherit open_proj return
 #' @export
 club <- function(club, new_session = TRUE) {
-  proj(glue::glue("bookclub-{club}"), new_session)
+  open_proj(glue::glue("bookclub-{club}"), new_session)
 }
