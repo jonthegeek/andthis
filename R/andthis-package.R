@@ -32,5 +32,6 @@
 #' @importFrom usethis use_tidy_description
 #' @importFrom usethis use_tidy_github_labels
 #' @importFrom usethis write_over
+#' @importFrom utils browseURL
 ## usethis namespace: end
 NULL
