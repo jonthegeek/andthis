@@ -28,6 +28,7 @@ Imports:
     stringr,
     tibble,
     usethis,
+    utils,
     whisker,
     withr
 Suggests: 
