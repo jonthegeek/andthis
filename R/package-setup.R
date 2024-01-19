@@ -4,15 +4,15 @@
 #' @param title What the package does in title case.
 #' @param description A one-paragraph description of the package. Will be used
 #'   to initially populate both the DESCRIPION and the README.
-#' @param r4ds Whether to create the package under the r4ds organization
-#'   (default `TRUE`).
+#' @param organization The GitHub organization to create the package under
+#'   (leave as `NULL` to create under `jonthegeek`).
 #'
 #' @return `NULL`, invisibly.
 #' @export
 create_package <- function(pkg_name,
                            title = "What the Package Does",
                            description = "The goal of {pkg_name} is to...",
-                           r4ds = TRUE) {
+                           organization = NULL) {
   path <- fs::path(getOption("usethis.destdir"), pkg_name)
   title <- glue::glue(title)
   description <- glue::glue(description)
@@ -31,11 +31,6 @@ create_package <- function(pkg_name,
 
   # Set the new project as the active project until this function completes.
   local_project(path)
-
-  organization <- NULL
-  if (r4ds) {
-    organization <- "r4ds"
-  }
 
   # Figure out where the project will be stored. Hard-coded and messy for
   # personal use.
