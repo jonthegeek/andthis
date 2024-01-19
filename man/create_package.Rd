@@ -8,7 +8,7 @@ create_package(
   pkg_name,
   title = "What the Package Does",
   description = "The goal of {pkg_name} is to...",
-  r4ds = TRUE
+  organization = NULL
 )
 }
 \arguments{
@@ -19,8 +19,8 @@ create_package(
 \item{description}{A one-paragraph description of the package. Will be used
 to initially populate both the DESCRIPION and the README.}
 
-\item{r4ds}{Whether to create the package under the r4ds organization
-(default \code{TRUE}).}
+\item{organization}{The GitHub organization to create the package under
+(leave as \code{NULL} to create under \code{jonthegeek}).}
 }
 \value{
 \code{NULL}, invisibly.
