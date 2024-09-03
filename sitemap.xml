@@ -1,75 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/404.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/SUPPORT.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/index.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/andthis-package.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/browse_here.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/club.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/create_club.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/create_club_chapter_rmds.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/create_package.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/dot-extract_precommit_blocks.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/dot-finalize_hooks.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/dot-parse_existing_pre_commit.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/dot-prepare_existing_hooks.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/dot-prepare_hook.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/open_proj.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/protect_main.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/protect_readme.html</loc>
-  </url>
-  <url>
-    <loc>https://jonthegeek.github.io/andthis/reference/use_precommit_hook.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://jonthegeek.github.io/andthis/404.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/CONTRIBUTING.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/LICENSE-text.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/LICENSE.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/SUPPORT.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/authors.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/index.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/andthis-package.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/browse_here.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/club.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/create_club.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/create_club_chapter_rmds.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/create_package.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/dot-extract_precommit_blocks.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/dot-finalize_hooks.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/dot-parse_existing_pre_commit.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/dot-prepare_existing_hooks.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/dot-prepare_hook.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/index.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/install_this.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/open_proj.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/protect_main.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/protect_readme.html</loc></url>
+<url><loc>https://jonthegeek.github.io/andthis/reference/use_precommit_hook.html</loc></url>
 </urlset>
+
