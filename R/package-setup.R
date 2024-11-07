@@ -20,7 +20,8 @@ create_package <- function(pkg_name,
     path,
     fields = list(
       Title = title,
-      Description = description
+      Description = description,
+      Language = "en-US"
     ),
     open = FALSE
   )
@@ -118,6 +119,10 @@ create_package <- function(pkg_name,
   ### Run the last couple calls.
   use_tidy_github_labels() # TODO: Update these to my own list.
   use_pkgdown_github_pages()
+
+  ### Update _pkgdown.yml
+  use_pkgdown_lang("en-US")
+  use_pkgdown_dev_auto()
 
   ### Clean up files that have been touched.
   use_tidy_description()
@@ -388,4 +393,27 @@ protect_main <- function() {
     hook = hook,
     priority = 1000
   )
+}
+
+use_pkgdown_lang <- function(lang = "en-US") {
+  .add_pkgdown_yaml(lang = lang)
+}
+
+use_pkgdown_dev_auto <- function() {
+  .add_pkgdown_yaml(development = list(mode = "auto"))
+}
+
+.add_pkgdown_yaml <- function(...) {
+  pkgdown_yml <- fs::path("_pkgdown.yml")
+  if (!fs::file_exists(pkgdown_yml)) {
+    cli::cli_abort(
+      "No _pkgdown.yml file found. Run `use_pkgdown_github_pages()` first."
+    )
+  }
+  pkgdown_yml_contents <- yaml::read_yaml(pkgdown_yml)
+  new_fields <- list(...)
+  for (field in names(new_fields)) {
+    pkgdown_yml_contents[[field]] <- new_fields[[field]]
+  }
+  yaml::write_yaml(pkgdown_yml_contents, pkgdown_yml)
 }
