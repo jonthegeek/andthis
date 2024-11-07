@@ -31,7 +31,8 @@ Imports:
     usethis,
     utils,
     whisker,
-    withr
+    withr,
+    yaml
 Suggests: 
     covr,
     testthat (>= 3.0.0)
